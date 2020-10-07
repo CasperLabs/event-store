@@ -6,9 +6,7 @@
 Event Fetcher is a program that is responsible for:
 * Reading events from Casper Node. It requires constantly open HTTP connection.
 * Retrying Casper Node connection if it drops.
-* Parsing events and sending them to the Event Store using
-  REST API. If Event Store is not available, events should be kept in the memory
-  and handled later.
+* Parsing events and sending them to the database using direct connection.
 
 systemd should supervise the Event Fetcher and restart it if required.
 
