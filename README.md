@@ -2,13 +2,13 @@
 ## High Level View
 ![](diagram.png)
 
-## Event Fetcher
-Event Fetcher is a program that is responsible for:
+## Event Handler
+Event Handler is a program that is responsible for:
 * Reading events from Casper Node. It requires constantly open HTTP connection.
 * Retrying Casper Node connection if it drops.
 * Parsing events and sending them to the database using direct connection.
 
-systemd should supervise the Event Fetcher and restart it if required.
+systemd should supervise the Event Handler and restart it if required.
 
 ## Event Store
 Event Store is a standard web server. It offers:
@@ -27,7 +27,7 @@ Web App is written in [Express.js](https://expressjs.com/).
 ### Database
 As a database we use MySQL. It can be easily set in the master-slave config,
 so each instance of a Web App has its own read-only instance. Only the
-instance, that populates data from the Event Fetcher needs write access.
+instance, that populates data from the Event Handler needs write access.
 
 Storage should be designed, so it doesn't store duplicated events.
 
