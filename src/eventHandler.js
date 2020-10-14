@@ -11,28 +11,27 @@ const nodeEventStream = 'http://localhost:50101/events';
  
 var storage;
 
-function OutputStream () {
-    stream.Writable.call(this);
+class OutputStream {
+    constructor() {
+        stream.Writable.call(this);
+    }
+    async _write(chunk, encoding, done) {
+
+        let jsonData = JSON.parse(chunk.toString().split("\n")[0].substr(5));
+
+        if (jsonData.BlockFinalized) {
+            console.log("Saving Finalized Block...");
+            await storage.onFinalizedBlock(jsonData.BlockFinalized);
+        } else if (jsonData.BlockAdded) {
+            console.log("Saving Added Block...");
+            await storage.onBlockAdded(jsonData.BlockAdded);
+        }
+
+        done();
+    }
 };
 
 util.inherits(OutputStream, stream.Writable);
-
-OutputStream.prototype._write = async function (chunk, encoding, done) {
-    // CHANGE CODE HERE
-    // console.log(JSON.parse(chunk.toString().split("\n")[0].substr(5)));
-
-    let jsonData = JSON.parse(chunk.toString().split("\n")[0].substr(5));
-
-    if (jsonData.BlockFinalized) {
-        console.log("Saving Finalized Block...");
-        await storage.onFinalizedBlock(jsonData.BlockFinalized);
-    } else if (jsonData.BlockAdded) {
-        console.log("Saving Added Block...");
-        await storage.onBlockAdded(jsonData.BlockAdded);
-    }
-
-    done();
-}
 
 const outputStream = new OutputStream();
 
