@@ -4,16 +4,17 @@ module.exports = (sequelize, DataTypes) => {
     class Block extends Model {
         static associate(models) {
             models.Block.Deploys = models.Block.hasMany(models.Deploy, {
-                foreignKey: 'blockHash'
+                foreignKey: 'protoBlockHash'
             });
         }
     };
 
     Block.init({
-        blockHash: {
+        protoBlockHash: {
             type: DataTypes.STRING,
             primaryKey: true
         },
+        blockHash: DataTypes.STRING,
         parentHash: DataTypes.STRING,
         timestamp: DataTypes.DATE,
         eraId: DataTypes.INTEGER,

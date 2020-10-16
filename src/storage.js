@@ -5,7 +5,8 @@ class Storage {
     
     async onFinalizedBlock(event) {
         await this.models.Block.create({
-            blockHash: event.proto_block.hash,
+            protoBlockHash: event.proto_block.hash,
+            blockHash: null,
             timestamp: event.timestamp,
             eraId: event.era_id,
             height: event.height,
@@ -31,14 +32,35 @@ class Storage {
     }
 
     async onBlockAdded(event) {
-        let block = await this.findBlockByHash(event.block_hash);
+        let block = await this.findBlockByHeight(event.block_header.height);
         block.state = 'added';
         block.parentHash = event.block_header.parent_hash;
+        block.blockHash = event.block_hash;
         await block.save();
     }
 
+    async findBlockByProtoHash(blockProtoHash) {
+        return this.models.Block.findByPk(blockProtoHash, {
+            include: this.models.Deploy
+        });
+    }
+
+    async findBlockByHeight(height) {
+        return this.models.Block.findOne({
+            where: { 
+                height: height 
+            } 
+        }, {
+            include: this.models.Deploy
+        });
+    }
+
     async findBlockByHash(blockHash) {
-        return this.models.Block.findByPk(blockHash, {
+        return this.models.Block.findOne({
+            where: { 
+                blockHash: blockHash 
+            } 
+        }, {
             include: this.models.Deploy
         });
     }

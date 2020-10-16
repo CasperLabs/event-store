@@ -15,24 +15,25 @@ describe('Storage', async () => {
         let e = data.finilizedBlockEvent;
         await storage.onFinalizedBlock(e);
         
-        let block = await storage.findBlockByHash(e.proto_block.hash);
+        let block = await storage.findBlockByProtoHash(e.proto_block.hash);
 
-        assert.strictEqual(block.blockHash, e.proto_block.hash);
+        assert.strictEqual(block.protoBlockHash, e.proto_block.hash);
         assert.strictEqual(block.timestamp.toISOString(), e.timestamp);
         assert.strictEqual(block.eraId, e.era_id);
         assert.strictEqual(block.height, e.height);
         assert.strictEqual(block.proposer, e.proposer);
         assert.strictEqual(block.state, 'finalized');
+        assert.isNull(block.blockHash)
         assert.isNull(block.parentHash)
 
         let deploys = await block.getDeploys();
 
         assert.strictEqual(deploys[0].deployHash, e.proto_block.deploys[0]);
-        assert.strictEqual(deploys[0].blockHash, e.proto_block.hash);
+        assert.strictEqual(deploys[0].protoBlockHash, e.proto_block.hash);
         assert.strictEqual(deploys[0].state, 'finalized');
         
         assert.strictEqual(deploys[1].deployHash, e.proto_block.deploys[1]);
-        assert.strictEqual(deploys[1].blockHash, e.proto_block.hash);
+        assert.strictEqual(deploys[1].protoBlockHash, e.proto_block.hash);
         assert.strictEqual(deploys[1].state, 'finalized');
     });
 
