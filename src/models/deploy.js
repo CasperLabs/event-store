@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     class Deploy extends Model {
         static associate(models) {
             models.Deploy.Block = models.Deploy.belongsTo(models.Block, {
-                foreignKey: 'protoBlockHash'
+                foreignKey: 'blockHeight'
             });
         }
     };

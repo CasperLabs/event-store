@@ -5,11 +5,10 @@ class Storage {
     
     async onFinalizedBlock(event) {
         await this.models.Block.create({
-            protoBlockHash: event.proto_block.hash,
+            blockHeight: event.height,
             blockHash: null,
             timestamp: event.timestamp,
             eraId: event.era_id,
-            height: event.height,
             proposer: event.proposer,
             state: 'finalized',
             Deploys: event.proto_block.deploys.map(deployHash => {
@@ -39,18 +38,8 @@ class Storage {
         await block.save();
     }
 
-    async findBlockByProtoHash(blockProtoHash) {
-        return this.models.Block.findByPk(blockProtoHash, {
-            include: this.models.Deploy
-        });
-    }
-
     async findBlockByHeight(height) {
-        return this.models.Block.findOne({
-            where: { 
-                height: height 
-            } 
-        }, {
+        return this.models.Block.findByPk(height, {
             include: this.models.Deploy
         });
     }
