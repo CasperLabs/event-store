@@ -19,6 +19,13 @@ class Storage {
             })
         }, {
             include: [ this.models.Block.Deploys ]
+        }).catch(err => {
+            if(err instanceof this.models.Sequelize.UniqueConstraintError){
+                console.log("alraead exists"); 
+            }
+            else{
+                throw err
+            }
         });
     }
 

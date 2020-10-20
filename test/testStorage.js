@@ -36,6 +36,12 @@ describe('Storage', async () => {
         assert.strictEqual(deploys[1].state, 'finalized');
     });
 
+    it('Should throw and error on duplicated BlockFinilized event', async () => {
+        let e = data.finilizedBlockEvent;
+        await storage.onFinalizedBlock(e);
+        await storage.onFinalizedBlock(e);
+    });
+
     it('Should handle DeployProcessed event', async () => {
         await storage.onFinalizedBlock(data.finilizedBlockEvent);
 
@@ -47,6 +53,15 @@ describe('Storage', async () => {
         assert.strictEqual(deploy.errorMessage, e.execution_result.error_message);
         assert.strictEqual(deploy.state, 'processed');
     });
+
+    it('Should skip DeployProcessed events without prior FinalizedBlock', async () => {
+
+        let e = data.deployProcessedEvent;
+        await storage.onDeployProcessed(e);
+
+        let deploy = await storage.findDeployByHash(e.deploy_hash);
+    });
+
 
     it('Should handle BlockAdded event', async () => {
         await storage.onFinalizedBlock(data.finilizedBlockEvent);
