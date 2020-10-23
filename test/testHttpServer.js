@@ -22,7 +22,7 @@ describe('HttpServer', async () => {
         await storage.onBlockAdded(data.blockAddedEvent1);
         await storage.onBlockAdded(data.blockAddedEvent2);
         await storage.onBlockAdded(data.blockAddedEvent3);
-        app = await httpServer(models);
+        app = httpServer(models);
     });
   
     it('Should respond with 404 on unknown block.', async () => {

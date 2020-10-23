@@ -1,13 +1,11 @@
 var express = require('express');
 var paginate = require('express-paginate');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+// var cookieParser = require('cookie-parser');
+// var logger = require('morgan');
 const Storage = require('./storage');
-// var indexRouter = require('../routes/index');
-// var usersRouter = require('../routes/users');
 var storage = null;
 
-let httpServer = async (models) => {
+let httpServer = (models) => {
     var app = express();
     storage = new Storage(models);
     

@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
-    "event-handler": "NODE_ENV=development node src/eventHandler.js",
+    "dev-start-web-server-with-mock-data": "NODE_ENV=development MOCK_DATA=1 node src/runHttpServer.js",
+    "dev-start-event-handler": "NODE_ENV=development node src/eventHandler.js",
     "test": "NODE_ENV=test mocha"
   },
   "dependencies": {
