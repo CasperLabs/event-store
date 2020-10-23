@@ -8,12 +8,19 @@ module.exports = (sequelize, DataTypes) => {
             });
         }
 
-        static jsonSchema() {
+        async toJSON() {
+            let deploys = await this.getDeploys();
             return {
-                // include all own properties and the associated `User` instance
-                include: ['@all'],
-                // let's exclude from the above the primary key and all foreign keys
-                exclude: [],
+                "blockHash": this.blockHash,
+                "parentHash": this.parentHash,
+                "timestamp": this.timestamp,
+                "eraId": this.eraId,
+                "proposer": this.proposer,
+                "state": this.state,
+                "height": this.blockHeight,
+                "deploys": deploys.map(deploy => {
+                    return deploy.deployHash;
+                })
             }
         }
     };
@@ -33,6 +40,6 @@ module.exports = (sequelize, DataTypes) => {
         sequelize,
         modelName: 'Block'
     });
-    
+
     return Block;
 };

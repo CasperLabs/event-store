@@ -1,35 +1,60 @@
 var express = require('express');
-var path = require('path');
+var paginate = require('express-paginate');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const Storage = require('./storage');
 // var indexRouter = require('../routes/index');
 // var usersRouter = require('../routes/users');
+var storage = null;
 
 let httpServer = async (models) => {
-    var storage = new Storage(models);
     var app = express();
+    storage = new Storage(models);
     
-    app.use(logger('dev'));
+    // app.use(logger('dev'));
     app.use(express.json());
     app.use(express.urlencoded({ extended: false }));
-    app.use(cookieParser());
     
     app.get('/block/:blockHash', async (req, res, next) => {
         let block = await storage.findBlockByHash(req.params.blockHash);
         if (block === null) {
             res.status(404).send("Block not found.");
         } else {
-            res.send("asd");
+            res.send(await block.toJSON());
         }
     });
 
+    app.get('/deploy/:deployHash', async (req, res, next) => {
+        let deploy = await storage.findDeployByHash(req.params.deployHash);
+        if (deploy === null) {
+            res.status(404).send("Deploy not found.");
+        } else {
+            res.send(await deploy.toJSON());
+        }
+    });
+
+    app.use(paginate.middleware(10, 20));
+
+    app.get('/blocks', async (req, res, next) => {
+        let blocks = await storage.findBlocks(req.query.limit, req.skip);
+        const itemCount = blocks.count;
+        const pageCount = Math.ceil(blocks.count / req.query.limit);
+        let result = {
+            data: await Promise.all(blocks.rows.map(block => {
+                return block.toJSON();
+            })),
+            pageCount: pageCount,
+            itemCount: itemCount,
+            pages: paginate.getArrayPages(req)(3, pageCount, req.query.page)
+        }
+        res.send(result);
+    });
+
     app.use(function (req,res,next){
-        res.status(404).send('Unable to find the requested resource!');
+        res.status(400).send('Bad Request');
     });
     
     return app;
 }
-
 
 module.exports = httpServer;

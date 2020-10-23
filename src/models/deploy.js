@@ -7,6 +7,17 @@ module.exports = (sequelize, DataTypes) => {
                 foreignKey: 'blockHeight'
             });
         }
+
+        async toJSON() {
+            let block = await this.getBlock();
+            return {
+                "deployHash": this.deployHash,
+                "state": this.state,
+                "cost": this.cost,
+                "errorMessage": this.errorMessage,
+                "blockHash": block.blockHash
+            }
+        }
     };
 
     Deploy.init({

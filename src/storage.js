@@ -21,7 +21,6 @@ class Storage {
             include: [ this.models.Block.Deploys ]
         }).catch(err => {
             if(err instanceof this.models.Sequelize.UniqueConstraintError){
-                console.log("alraead exists"); 
             }
             else{
                 throw err
@@ -61,8 +60,18 @@ class Storage {
         });
     }
 
+    async findBlocks(limit, offset) {
+        return this.models.Block.findAndCountAll({
+            limit: limit,
+            offset: offset,
+            order: [['blockHeight', 'DESC']]
+        });
+    }
+
     async findDeployByHash(deployHash) {
-        return this.models.Deploy.findByPk(deployHash);
+        return this.models.Deploy.findByPk(deployHash, {
+            include: this.models.Block
+        });
     }
 }
 

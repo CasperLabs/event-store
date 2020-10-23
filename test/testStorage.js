@@ -12,7 +12,7 @@ describe('Storage', async () => {
     });
   
     it('Should handle BlockFinilized event', async () => {
-        let e = data.finilizedBlockEvent;
+        let e = data.finilizedBlockEvent1;
         await storage.onFinalizedBlock(e);
         
         let block = await storage.findBlockByHeight(e.height);
@@ -37,15 +37,15 @@ describe('Storage', async () => {
     });
 
     it('Should throw and error on duplicated BlockFinilized event', async () => {
-        let e = data.finilizedBlockEvent;
+        let e = data.finilizedBlockEvent1;
         await storage.onFinalizedBlock(e);
         await storage.onFinalizedBlock(e);
     });
 
     it('Should handle DeployProcessed event', async () => {
-        await storage.onFinalizedBlock(data.finilizedBlockEvent);
+        await storage.onFinalizedBlock(data.finilizedBlockEvent1);
 
-        let e = data.deployProcessedEvent;
+        let e = data.deployProcessedEvent1;
         await storage.onDeployProcessed(e);
 
         let deploy = await storage.findDeployByHash(e.deploy_hash);
@@ -54,18 +54,9 @@ describe('Storage', async () => {
         assert.strictEqual(deploy.state, 'processed');
     });
 
-    it('Should skip DeployProcessed events without prior FinalizedBlock', async () => {
-
-        let e = data.deployProcessedEvent;
-        await storage.onDeployProcessed(e);
-
-        let deploy = await storage.findDeployByHash(e.deploy_hash);
-    });
-
-
     it('Should handle BlockAdded event', async () => {
-        await storage.onFinalizedBlock(data.finilizedBlockEvent);
-        let e = data.blockAddedEvent;
+        await storage.onFinalizedBlock(data.finilizedBlockEvent1);
+        let e = data.blockAddedEvent1;
         await storage.onBlockAdded(e);
 
         let block = await storage.findBlockByHash(e.block_hash);
