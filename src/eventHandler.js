@@ -1,35 +1,75 @@
+const stream = require('stream');
+const { promisify } = require('util');
+const got = require('got');
+const Storage = require('./storage');
+const models = require('../src/models/index');
+const env = process.env.NODE_ENV || 'development';
+
 class EventHandler {
-    constructor(
-        stream = require('stream'),
-        {promisify} = require('util'),
-        util = require('util'),
-         
-        models = require('./models/index'),
-        Storage = require('./storage')
-    ) {
-        this.stream = stream;
-        this.promisify = promisify;
-        this.util = util;
+    constructor() {}
 
+    /**
+     * Returns readable stream when provided with url of event stream.
+     * Url can be created with EventHandler.formURL()
+     * 
+     * @param {string} url 
+     */
+    async createInputStream(url) {
+
+        try {
+            return got.stream(url);
+        } catch (err) {
+            throw new Error(err);
+        }
         
-        this.models = models;
-        this.storage = Storage;
-
-        this.eventStream = EventStream;
-        this.outputStream = OutputStream;
     }
 
-    async initialiseStream() {
-        const pipeline = this.promisify(this.stream.pipeline);
+    /**
+     * Returns writeable stream pointed to the storage component
+     */
+    async createOutputStream() {
 
-        this.util.inherits(this.outputStream, this.stream.Writable);
+        // initialise storage
+        await models.sequelize.sync({ force: true, logging: false });
+        let storage = new Storage(models);
 
-        let nodeEventStream = new this.eventStream();
-        await this.models.sequelize.sync({ force: true, logging: false });
-        let storage = new this.storage(this.models)
+        // Extend empty writeable object
+        let outputStream = new stream.Writable();
+        
+        outputStream._write = async (chunk, encoding, done) => {
+            // Removes 'data:' prefix from the event to convert it to JSON
+            let jsonData = JSON.parse(chunk.toString().split("\n")[0].substr(5));
 
-        let inputStream = nodeEventStream.stream;
-        let outputStream = new this.outputStream(storage);
+            // Uncomment to get JSON output from event stream to stdout
+            // console.log(jsonData);
+
+            if (jsonData.BlockFinalized) {
+                console.log("\nSaving Finalized Block..."); // For debugging
+                await storage.onFinalizedBlock(jsonData.BlockFinalized);
+            } else if (jsonData.DeployProcessed) {
+                console.log("\nSaving Processed Deploys..."); // For debugging
+                await storage.onDeployProcessed(jsonData.DeployProcessed);
+            } else if (jsonData.BlockAdded) {
+                console.log("\nSaving Added Block..."); // For debugging
+                await storage.onBlockAdded(jsonData.BlockAdded);
+            }
+    
+            done();
+        }
+
+        return outputStream;
+    }
+
+    /**
+     * Attempts to create a streaming pipeline given an input and output stream.
+     * 
+     * @param {stream.Readable} inputStream 
+     * @param {stream.Writable} outputStream 
+     */
+    async createPipeline(inputStream, outputStream) {
+
+        // initialise pipeline
+        const pipeline = promisify(stream.pipeline);
 
         try {
             await pipeline(
@@ -37,76 +77,65 @@ class EventHandler {
                 outputStream
             );
         } catch (err) {
-            console.error("\n" + err);
+            console.error(err);
         }
     }
 
-}
 
-class EventStream {
-    constructor(
-        got = require('got'),
-
+    /**
+     * Returns a url based on given args.
+     * If all args are omitted then it will return the default url of:
+     * http://localhost:50101/events  -  The node event stream when using nctl.
+     * 
+     * @param {string} protocol 
+     * @param {string} domain 
+     * @param {int} port 
+     * @param {string} path 
+     */
+    async formURL(
         protocol,
         domain,
         port,
         path
     ) {
-        this.got = got;
 
+        // Set defaults if args not passed
         this.protocol = (protocol !== undefined) ? protocol : 'http';
         this.domain = (domain !== undefined) ? domain : 'localhost';
         this.port = (port !== undefined) ? port : 50101;
         this.path = (path !== undefined) ? path : 'events';
-    }
 
-    get url() {
         return (
             this.protocol + "://" + 
             this.domain +
             (this.port 
                 ? ":" + this.port
-                : "") +
+                : ""
+            ) +
             (this.path
                 ? "/" + this.path
-                : "") 
-            );
+                : ""
+            ) 
+        );
+
     }
 
-    get stream() {
-        return this.got.stream(this.url);
-    }
 }
 
-class OutputStream extends EventHandler{
-    constructor(storage) {
-        super();
-        this.stream.Writable.call(this);
-        this.storage = storage;
+// For debugging - uncomment to run the eventHandler.
+if (env == 'development') {
+
+    runEventHandler = async () => {
+
+        let eventHandler = new EventHandler();
+        let nodeUrl = await eventHandler.formURL();
+        let eventStream = await eventHandler.createInputStream(nodeUrl);
+        let storageStream = await eventHandler.createOutputStream();
+
+        eventHandler.createPipeline(eventStream, storageStream);
     }
 
-    async _write(chunk, encoding, done) {
+    runEventHandler();
+}
 
-        // Removes 'data:' prefix from the event to convert it to JSON
-        let jsonData = JSON.parse(chunk.toString().split("\n")[0].substr(5));
-        
-        // Raw events
-        console.log(jsonData);
-
-        if (jsonData.BlockFinalized) {
-            console.log("\nSaving Finalized Block..."); // For debugging
-            await this.storage.onFinalizedBlock(jsonData.BlockFinalized);
-        } else if (jsonData.BlockAdded) {
-            console.log("\nSaving Added Block..."); // For debugging
-            await this.storage.onBlockAdded(jsonData.BlockAdded);
-        }
-
-        done();
-    }
-};
-
-// For debugging
-let eventHandler = new EventHandler();
-eventHandler.initialiseStream();
-
-module.exports = EventHandler;
+module.exports = EventHandler
