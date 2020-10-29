@@ -45,6 +45,7 @@ module.exports = {
 
     deployProcessedEvent1: {
         "deploy_hash":"deploy1_0fb356b6d76d2f64a9500ed2cf1d3062ffcf03bb837003c8208602c5d3",
+        "account": "010c801c47ed20a9ec40a899ddc7b51a15db2a6c55041313eb0201ae04ee9bf932",
         "block_hash":"aacd466409191316db2ad075bf005cba502e2a46f83102bceb736356a9c51111",
         "execution_result":{
             "cost":"11",
@@ -54,6 +55,7 @@ module.exports = {
 
     deployProcessedEvent2: {
         "deploy_hash":"deploy2_6fb356b6d76d2f64a9500ed2cf1d3062ffcf03bb837003c8208602c5d3",
+        "account": "010c801c47ed20a9ec40a899ddc7b51a15db2a6c55041313eb0201ae04ee9bf932",
         "block_hash":"aacd466409191316db2ad075bf005cba502e2a46f83102bceb736356a9c51111",
         "execution_result":{
             "cost":"12",
@@ -63,6 +65,7 @@ module.exports = {
 
     deployProcessedEvent3: {
         "deploy_hash":"deploy3_0fb356b6d76d2f64a9500ed2cf1d3062ffcf03bb837003c8208602c5d3",
+        "account": "1234501c47ed20a9ec40a899ddc7b51a15db2a6c55041313eb0201ae04ee9bf932",
         "block_hash":"abcd466409191316db2ad075bf005cba502e2a46f83102bceb736356a9c51111",
         "execution_result":{
             "cost":"12",

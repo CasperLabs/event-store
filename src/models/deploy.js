@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
             let block = await this.getBlock();
             return {
                 "deployHash": this.deployHash,
+                "account": this.account,
                 "state": this.state,
                 "cost": this.cost,
                 "errorMessage": this.errorMessage,
@@ -25,6 +26,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             primaryKey: true
         },
+        account: DataTypes.STRING,
         state: DataTypes.STRING,
         cost: DataTypes.INTEGER,
         errorMessage: DataTypes.STRING
