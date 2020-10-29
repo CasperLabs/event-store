@@ -1,8 +1,15 @@
 class Storage {
     constructor(models) {
         this.models = models;
+        this.malformedBlocks = [];
+        this.duplicatedBlocks = [];
     }
     
+    /**
+     * Error handling needs discussed and improved 
+     */
+
+
     async onFinalizedBlock(event) {
         await this.models.Block.create({
             blockHeight: event.height,
@@ -21,6 +28,16 @@ class Storage {
             include: [ this.models.Block.Deploys ]
         }).catch(err => {
             if(err instanceof this.models.Sequelize.UniqueConstraintError){
+                console.error(
+                "\nError: Duplicated blockHeight in event" + 
+                "\nDuplicate block with height " + event.height + " will not be saved\n");
+                this.duplicatedBlocks.push(event.height);
+            }
+            else if (err instanceof this.models.Sequelize.ValidationError) {
+                console.error(
+                "\nValidation Issue - this is probably due to an incorrectly formatted field in the event" + 
+                "\nBlock with height " + event.height + " will not be saved\n");
+                this.malformedBlocks.push(event.height);
             }
             else{
                 throw err
@@ -30,6 +47,7 @@ class Storage {
 
     async onDeployProcessed(event) {
         let deploy = await this.findDeployByHash(event.deploy_hash);
+        deploy.account = event.account;
         deploy.cost = event.execution_result.cost;
         deploy.errorMessage = event.execution_result.error_message;
         deploy.state = 'processed';
@@ -37,11 +55,14 @@ class Storage {
     }
 
     async onBlockAdded(event) {
-        let block = await this.findBlockByHeight(event.block_header.height);
-        block.state = 'added';
-        block.parentHash = event.block_header.parent_hash;
-        block.blockHash = event.block_hash;
-        await block.save();
+        if (!this.malformedBlocks.includes(event.block_header.height)) {
+            console.log(this.malformedBlocks);
+            let block = await this.findBlockByHeight(event.block_header.height);
+            block.state = 'added';
+            block.parentHash = event.block_header.parent_hash;
+            block.blockHash = event.block_hash;
+            await block.save();
+        }
     }
 
     async findBlockByHeight(height) {
@@ -71,6 +92,17 @@ class Storage {
     async findDeployByHash(deployHash) {
         return this.models.Deploy.findByPk(deployHash, {
             include: this.models.Block
+        });
+    }
+
+    async findDeploysByAccount(account, limit, offset) {
+        return this.models.Deploy.findAndCountAll({
+            limit: limit,
+            offset: offset,
+            order: [['blockHeight', 'DESC']],
+            where: {
+                account: account
+            }
         });
     }
 }
