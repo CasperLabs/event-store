@@ -28,7 +28,15 @@ module.exports = (sequelize, DataTypes) => {
     Block.init({
         blockHeight: {
             type: DataTypes.INTEGER,
-            primaryKey: true
+            primaryKey: true,
+            allowNull: false,
+            validate: {
+                isInteger(value) {
+                    if ( typeof(value) !== 'number' ) {
+                        throw new Error("blockHeight was not a number");
+                    }
+                }
+            }
         },
         blockHash: DataTypes.STRING,
         parentHash: DataTypes.STRING,
