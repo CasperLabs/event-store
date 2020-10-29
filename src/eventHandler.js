@@ -1,8 +1,10 @@
 const stream = require('stream');
 const { promisify } = require('util');
 const got = require('got');
+const fs = require('fs');
 const Storage = require('./storage');
 const models = require('../src/models/index');
+const mockData = require('../test/mockData');
 const env = process.env.NODE_ENV || 'development';
 
 class EventHandler {
@@ -16,10 +18,18 @@ class EventHandler {
      */
     async createInputStream(url) {
 
-        try {
-            return got.stream(url);
-        } catch (err) {
-            throw new Error(err);
+        if (url == 'mockdata') {
+            try {
+                return fs.createReadStream("../test/mockData.js");
+            } catch (err) {
+                throw new Error(err);
+            }
+        } else {
+            try {
+                return got.stream(url);
+            } catch (err) {
+                throw new Error(err);
+            }
         }
         
     }
