@@ -125,28 +125,33 @@ describe('HttpServer', async () => {
         assert.strictEqual(response.statusCode, 200);
         let expected = {
             data:
-                [ { deployHash:'deploy1_0fb356b6d76d2f64a9500ed2cf1d3062ffcf03bb837003c8208602c5d3',
-                    account:'010c801c47ed20a9ec40a899ddc7b51a15db2a6c55041313eb0201ae04ee9bf932',
-                    state: 'processed',
-                    cost: 11,
-                    errorMessage: null,
-                    blockHash:
-                        'block1_6409191316db2ad075bf005cba502e2a46f83102bceb736356a9c51111' },
-                    { deployHash:
-                        'deploy2_6fb356b6d76d2f64a9500ed2cf1d3062ffcf03bb837003c8208602c5d3',
-                    account:
-                        '010c801c47ed20a9ec40a899ddc7b51a15db2a6c55041313eb0201ae04ee9bf932',
-                    state: 'processed',
-                    cost: 12,
-                    errorMessage: null,
-                    blockHash:
-                        'block1_6409191316db2ad075bf005cba502e2a46f83102bceb736356a9c51111' } ],
+                [ 
+                    { 
+                        deployHash: 'deploy1_0fb356b6d76d2f64a9500ed2cf1d3062ffcf03bb837003c8208602c5d3',
+                        account: '010c801c47ed20a9ec40a899ddc7b51a15db2a6c55041313eb0201ae04ee9bf932',
+                        state: 'processed',
+                        cost: 11,
+                        errorMessage: null,
+                        blockHash: 'block1_6409191316db2ad075bf005cba502e2a46f83102bceb736356a9c51111' 
+                    },
+                    { 
+                        deployHash: 'deploy2_6fb356b6d76d2f64a9500ed2cf1d3062ffcf03bb837003c8208602c5d3',
+                        account: '010c801c47ed20a9ec40a899ddc7b51a15db2a6c55041313eb0201ae04ee9bf932',
+                        state: 'processed',
+                        cost: 12,
+                        errorMessage: null,
+                        blockHash: 'block1_6409191316db2ad075bf005cba502e2a46f83102bceb736356a9c51111' 
+                    } 
+                ],
                 pageCount: 1,
                 itemCount: 2,
                 pages:
-                [ { number: 1,
-                    url:
-                        '/accountDeploys/010c801c47ed20a9ec40a899ddc7b51a15db2a6c55041313eb0201ae04ee9bf932?page=1&limit=10' } ]
+                [ 
+                    {
+                        number: 1,
+                        url: '/accountDeploys/010c801c47ed20a9ec40a899ddc7b51a15db2a6c55041313eb0201ae04ee9bf932?page=1&limit=10' 
+                    } 
+                ]
         };
         assert.deepEqual(expected, response.body)
     });
