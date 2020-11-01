@@ -26,14 +26,16 @@ module.exports = (sequelize, DataTypes) => {
     };
 
     Block.init({
-        blockHeight: {
+        blockHeight: { 
             type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
             validate: {
-                isInteger(value) {
-                    if ( typeof(value) !== 'number' ) {
-                        throw new Error("blockHeight was not a number");
+                // Can't use the validator.js fn as it reads strings as valid numbers.
+                isInteger() {
+                    if ( typeof(this.blockHeight) !== 'number' ) {
+                        // TODO: Doesn't break the stream - should note this duplicated block somewhere in the storage
+                        console.warn("\n\tWARN: blockHeight not a number for block at height: " + this.blockHeight + "\n");
                     }
                 }
             }
