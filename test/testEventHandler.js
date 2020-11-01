@@ -17,7 +17,7 @@ describe('EventHandler', async () => {
         eventHandler = new EventHandler();
     })
 
-    it('Should handle stream connection drop', async () => {
+    it('TODO: Should handle stream connection drop', async () => {
 
         // const ssh = cp.spawn('ssh', [
         //     // Operate in the background & Don't execute commands on the remote host
@@ -28,6 +28,6 @@ describe('EventHandler', async () => {
         //     '-R', '',
         // ])
 
-        assert.strictEqual(1,1);
+        assert.strictEqual(1,2);
     });
 })
