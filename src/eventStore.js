@@ -15,7 +15,11 @@ var http = require('http');
     if (process.env.MOCK_DATA) {
         const Storage = require('./storage');
         let storage = new Storage(models);
-        const data = require('../test/mockData.js');
+        if (process.env.MOCK_DATA == 2) {
+            var data = require('../test/testData/duplicateEvents.js');
+        } else {
+            var data = require('../test/mockData.js');
+        }
         await storage.onFinalizedBlock(data.finilizedBlockEvent1);
         await storage.onFinalizedBlock(data.finilizedBlockEvent2);
         await storage.onFinalizedBlock(data.finilizedBlockEvent3);

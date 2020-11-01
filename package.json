@@ -5,6 +5,7 @@
   "scripts": {
     "dev-start-web-server": "NODE_ENV=development node src/eventStore.js",
     "dev-start-web-server-with-mock-data": "NODE_ENV=development MOCK_DATA=1 node src/eventStore.js",
+    "dev-start-web-server-with-duplicate-data": "NODE_ENV=development MOCK_DATA=2 node src/eventStore.js",
     "dev-start-event-handler": "NODE_ENV=development node src/eventHandler.js",
     "test": "NODE_ENV=test mocha"
   },
