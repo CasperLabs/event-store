@@ -121,7 +121,6 @@ describe('HttpServer', async () => {
     it('Should handle the deploy by account query.', async () => {
         let account = data.deployProcessedEvent1.account;
         let response = await chai.request(app).get(`/accountDeploys/${account}`);
-        console.log(response.body);
         assert.strictEqual(response.statusCode, 200);
         let expected = {
             data:
