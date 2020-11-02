@@ -36,7 +36,7 @@ describe('Storage', async () => {
         assert.strictEqual(deploys[1].state, 'finalized');
     });
 
-    it('Should throw and error on duplicated BlockFinilized event', async () => {
+    it('Should log warning on duplicated BlockFinalized event', async () => {
         let e = data.finilizedBlockEvent1;
         await storage.onFinalizedBlock(e);
         await storage.onFinalizedBlock(e);

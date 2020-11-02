@@ -7,6 +7,8 @@ class Storage {
         let existingBlock = await this.models.Block.findOne({where: {blockHeight: event.height}});
         if (existingBlock !== null) {
             // logs msg
+            console.warn("\n\tWARN: event is a duplicate of existing block at height: " + event.height);
+            console.warn("\tThis may cause problems in subsequent events\n");
             return;
         };
         await this.models.Block.create({
@@ -29,11 +31,12 @@ class Storage {
 
     async onDeployProcessed(event) {
         let deploy = await this.findDeployByHash(event.deploy_hash);
-        if (deploy === null || deploy.status !== 'finalized'){
+        if (deploy === null || deploy.state !== 'finalized'){
             // logs msg
+            console.warn("\n\tWARN: Could not find existing finalized deploy to process");
+            console.warn("\tThis might be due to a problem in the corresponding blockFinalized event\n");
             return;
         }
-
         deploy.account = event.account;
         deploy.cost = event.execution_result.cost;
         deploy.errorMessage = event.execution_result.error_message;
@@ -43,16 +46,16 @@ class Storage {
 
     async onBlockAdded(event) {
         let block = await this.findBlockByHeight(event.block_header.height);
-        if (block === null || block.status !== 'finalized') {
+        if (block === null || block.state !== 'finalized') {
             // logs msg
             console.warn("\n\tWARN: block missing at height: " + event.block_header.height);
             console.warn("\tThis might be due to a problem in the corresponding blockFinalized event\n");
-        } else {
-            block.state = 'added';
-            block.parentHash = event.block_header.parent_hash;
-            block.blockHash = event.block_hash;
-            await block.save();
-        }    
+            return;
+        }
+        block.state = 'added';
+        block.parentHash = event.block_header.parent_hash;
+        block.blockHash = event.block_hash;
+        await block.save();    
     }
 
     async findBlockByHeight(height) {

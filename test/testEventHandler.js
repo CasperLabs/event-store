@@ -6,6 +6,8 @@ var models = require('../src/models/index');
 const Storage = require('../src/storage');
 
 /**
+ * Event Handler stream can be configured in eh-config.json
+ * 
  * Tests to be Added
  *  - Handle connection drop 
  */
