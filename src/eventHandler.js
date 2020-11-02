@@ -6,6 +6,7 @@ const Storage = require('./storage');
 const models = require('../src/models/index');
 const mockData = require('../test/mockData');
 const env = process.env.NODE_ENV || 'development';
+const config = require(__dirname + '/../eh-config.json')[env];
 
 class EventHandler {
     constructor() {}
@@ -26,12 +27,17 @@ class EventHandler {
             }
         } else {
             try {
-                return got.stream(url);
+                const readStream = got.stream(url);
+                // Still to implement retry on failed connection
+                return readStream;
             } catch (err) {
-                throw new Error(err);
+                if (err instanceof got.stream.RequestError) {
+                    throw new Error("Connection Failed - check the status of the node:\n" + err);
+                } else {
+                    throw new Error(err);
+                }
             }
         }
-        
     }
 
     /**
@@ -96,6 +102,7 @@ class EventHandler {
      * Returns a url based on given args.
      * If all args are omitted then it will return the default url of:
      * http://localhost:50101/events  -  The node event stream when using nctl.
+     * This is defined and is configurable in eh-config.json
      * 
      * @param {string} protocol 
      * @param {string} domain 
@@ -110,10 +117,10 @@ class EventHandler {
     ) {
 
         // Set defaults if args not passed
-        this.protocol = (protocol !== undefined) ? protocol : 'http';
-        this.domain = (domain !== undefined) ? domain : 'localhost';
-        this.port = (port !== undefined) ? port : 50101;
-        this.path = (path !== undefined) ? path : 'events';
+        this.protocol = (protocol !== undefined) ? protocol : config.EH_STREAM_PROTOCOL;
+        this.domain = (domain !== undefined) ? domain : config.EH_STREAM_DOMAIN;
+        this.port = (port !== undefined) ? port : config.EH_STREAM_PORT;
+        this.path = (path !== undefined) ? path : config.EH_STREAM_PATH;
 
         return (
             this.protocol + "://" + 
@@ -132,8 +139,8 @@ class EventHandler {
 
 }
 
-// For debugging - uncomment to run the eventHandler.
-if (env == 'development') {
+// For debugging
+if (env !== 'test') {
 
     runEventHandler = async () => {
 
