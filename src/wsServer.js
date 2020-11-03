@@ -7,10 +7,8 @@ let wsServer = (pubsub) => {
 
     app.ws('/blocks', function(ws, req) {
         pubsub.on_block( (block) => {
-            console.log("on block");
             ws.send(block);
         });
-        console.log('socket open');
     });
     
     return wsApp;

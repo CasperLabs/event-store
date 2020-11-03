@@ -1,6 +1,7 @@
 class Storage {
-    constructor(models) {
+    constructor(models, pubsub = null) {
         this.models = models;
+        this.pubsub = pubsub;
     }
 
     async onFinalizedBlock(event) {
@@ -55,7 +56,11 @@ class Storage {
         block.state = 'added';
         block.parentHash = event.block_header.parent_hash;
         block.blockHash = event.block_hash;
-        await block.save();    
+        await block.save();
+
+        if(this.pubsub !== null){
+            this.pubsub.broadcast_block(await block.toJSON());
+        }
     }
 
     async findBlockByHeight(height) {
