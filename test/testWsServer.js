@@ -71,9 +71,48 @@ describe('WebSocket Server', async () => {
         });
     });
 
-    // it('Should handle accountDeploys query', (done) => {
-    //     client = new WebSocket('ws://localhost:4000/accountDeploys/1902931231');
-    // });
+    it('Should handle accountDeploys query', (done) => {
+        // Proposer's account hash
+        console.log("\n\t= LOGGING FOR DEBUGGING =");
+        let account_hash = data.deployProcessedEvent1.account;
+        client = new WebSocket(`ws://localhost:4000/accountDeploys/010c801c47ed20a9ec40a899ddc7b51a15db2a6c55041313eb0201ae04ee9bf932`);
+        client.on('message', async (deploys) => {
+            console.log("Receiving...");
+            let expected = [
+                {
+                  "deployHash": "deploy1_0fb356b6d76d2f64a9500ed2cf1d3062ffcf03bb837003c8208602c5d3",
+                  "account": "010c801c47ed20a9ec40a899ddc7b51a15db2a6c55041313eb0201ae04ee9bf932",
+                  "state": "processed",
+                  "cost": 11,
+                  "errorMessage": null,
+                  "blockHash": "block1_6409191316db2ad075bf005cba502e2a46f83102bceb736356a9c51111"
+                },
+                {
+                  "deployHash": "deploy2_6fb356b6d76d2f64a9500ed2cf1d3062ffcf03bb837003c8208602c5d3",
+                  "account": "010c801c47ed20a9ec40a899ddc7b51a15db2a6c55041313eb0201ae04ee9bf932",
+                  "state": "processed",
+                  "cost": 12,
+                  "errorMessage": null,
+                  "blockHash": "block1_6409191316db2ad075bf005cba502e2a46f83102bceb736356a9c51111"
+                }
+            ];
+            try {
+                console.log("Checking deploys...");
+                assert.deepEqual(deploys, expected);
+                done();
+            } catch (error) {
+                done(new Error("Not expected deploys"));
+            }
+        });
+        client.on('open', async () => {
+            await storage.onFinalizedBlock(data.finilizedBlockEvent1);
+            await storage.onFinalizedBlock(data.finilizedBlockEvent2);
+            await storage.onFinalizedBlock(data.finilizedBlockEvent3);
+            await storage.onDeployProcessed(data.deployProcessedEvent1);
+            await storage.onDeployProcessed(data.deployProcessedEvent2);
+            await storage.onDeployProcessed(data.deployProcessedEvent3);
+        });
+    });
     
 
     afterEach(async () => {

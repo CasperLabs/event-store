@@ -10,6 +10,15 @@ let wsServer = (pubsub) => {
             ws.send(block);
         });
     });
+
+    app.ws('/accountDeploys/:account', function(ws, req) {
+        console.log(`WSS :: /deploys/${req.params.account} request`);
+        pubsub.on_deploy(req.params.account ,(deploy) => {
+            console.log("WSS :: callback from PubSub");
+            console.log("WSS :: deploy: " + deploy);
+            ws.send(deploy);
+        });
+    });
     
     return wsApp;
 }
