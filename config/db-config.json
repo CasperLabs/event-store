@@ -1,12 +1,12 @@
 {
+  "test": {
+    "dialect": "sqlite",
+    "logging": false
+  },
   "development": {
     "dialect": "sqlite",
     "logging": false,
     "storage": "developement_sqlite.db"
-  },
-  "test": {
-    "dialect": "sqlite",
-    "logging": false
   },
   "production": {
     "username": "root",

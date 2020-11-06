@@ -1,7 +1,5 @@
 var express = require('express');
 var paginate = require('express-paginate');
-// var cookieParser = require('cookie-parser');
-// var logger = require('morgan');
 const Storage = require('./storage');
 var storage = null;
 

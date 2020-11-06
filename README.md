@@ -201,3 +201,37 @@ $ curl -s localhost:3000/accountDeploys/010c801c47ed20a9ec40a899ddc7b51a15db2a6c
   ]
 }
 ```
+
+## Config
+There are three configuration files that lives in `config` directory.
+- `config/db-config.json` is the database configuration.
+- `config/eh-config.json` is used by the Event Handler to specify the URL of the Node's `/events` endpoint. 
+- `config/web-config.json` is used by the Event Web Server to specify its host and port.
+
+## Docker Setup
+
+### Event Handler
+Event handler needs to have the connectivity with the database and the Node.
+
+##### Build
+```
+docker build . -f Dockerfile.handler -t event_handler
+```
+
+##### Run
+```
+docker run -it -v $PWD/config:/app/config event_handler
+```
+
+### Event Web Server
+Event Web Server needs to have the connectivity with the database (and soon Redis).
+
+##### Build
+```
+docker build . -f Dockerfile.web_server -t event_web_server
+```
+
+##### Run
+```
+docker run -it -v $PWD/config:/app/config event_web_server
+```

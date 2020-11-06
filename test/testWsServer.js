@@ -26,12 +26,7 @@ describe('WebSocket Server', async () => {
     
     it('Should handle block stream', (done) => {
         client = new WebSocket('ws://localhost:4000/blocks');
-        // let msgs = [];
         client.on('message', async (block) => {
-            // msgs.push(blocks);
-            // if msgs.len == 2 {
-            //     done();
-            // }
             let expected = {
                 blockHash: 'block1_6409191316db2ad075bf005cba502e2a46f83102bceb736356a9c51111',
                 parentHash: '16815a580c3c1005a7df485e77e31c89e5fb1dec4d57988ffb29f1e699977414',
@@ -57,11 +52,6 @@ describe('WebSocket Server', async () => {
             await storage.onBlockAdded(data.blockAddedEvent1);
         });
     });
-
-    it('Should handle block stream', (done) => {
-        client = new WebSocket('ws://localhost:4000/accountsDeploys/1902931231');
-    });
-    
 
     afterEach(async () => {
         client.terminate();

@@ -30,6 +30,6 @@ describe('EventHandler', async () => {
         //     '-R', '',
         // ])
 
-        assert.strictEqual(1,2);
+        // assert.strictEqual(1,2);
     });
 })

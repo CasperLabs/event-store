@@ -6,7 +6,7 @@ const Storage = require('./storage');
 const models = require('../src/models/index');
 const mockData = require('../test/mockData');
 const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../eh-config.json')[env];
+const config = require(__dirname + '/../config/eh-config.json')[env];
 
 class EventHandler {
     constructor() {}
@@ -46,7 +46,7 @@ class EventHandler {
     async createOutputStream() {
 
         // initialise storage
-        await models.sequelize.sync({ force: true, logging: false });
+        // await models.sequelize.sync({ force: false, logging: false });
         let storage = new Storage(models);
 
         // Extend empty writeable object
