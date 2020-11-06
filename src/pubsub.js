@@ -10,7 +10,8 @@ class PubSub {
     }
 
     broadcast_deploy(deploy) {
-        this.publisher.publish("ws:deploys:" + deploy.account, JSON.stringify(deploy));
+        console.log("PUBSUB :: Broadcast Deploy");
+        this.publisher.publish("ws:accountdeploys:" + deploy.account, JSON.stringify(deploy));
     }
 
     on_block(callback) {
@@ -21,10 +22,11 @@ class PubSub {
     }
 
     on_deploy(account, callback) {
-        this.subscriber.on("message", (channel, block) => {
-            callback(block);
+        console.log("PUBSUB :: on_deploy for " + account);
+        this.subscriber.on("message", (channel, deploy) => {
+            callback(deploy);
         });
-        this.subscriber.subscribe("ws:deploys:" + account);
+        this.subscriber.subscribe("ws:accountDeploys:" + account);
     }
 
 }

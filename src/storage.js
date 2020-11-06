@@ -43,6 +43,10 @@ class Storage {
         deploy.errorMessage = event.execution_result.error_message;
         deploy.state = 'processed';
         await deploy.save();
+
+        if(this.pubsub !== null) {
+            this.pubsub.broadcast_deploy(await deploy.toJSON());
+        }
     }
 
     async onBlockAdded(event) {
