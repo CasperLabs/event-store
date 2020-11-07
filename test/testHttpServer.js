@@ -13,9 +13,9 @@ describe('HttpServer', async () => {
     beforeEach(async () => {
         await models.sequelize.sync({ force: true, logging: false });
         storage = new Storage(models);
-        await storage.onFinalizedBlock(data.finilizedBlockEvent1);
-        await storage.onFinalizedBlock(data.finilizedBlockEvent2);
-        await storage.onFinalizedBlock(data.finilizedBlockEvent3);
+        await storage.onFinalizedBlock(data.finalizedBlockEvent1);
+        await storage.onFinalizedBlock(data.finalizedBlockEvent2);
+        await storage.onFinalizedBlock(data.finalizedBlockEvent3);
         await storage.onDeployProcessed(data.deployProcessedEvent1);
         await storage.onDeployProcessed(data.deployProcessedEvent2);
         await storage.onDeployProcessed(data.deployProcessedEvent3);

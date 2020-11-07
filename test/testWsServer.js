@@ -67,8 +67,8 @@ describe('WebSocket Server', async () => {
             }
         });
         client.on('open', async () => {
-            await storage.onFinalizedBlock(data.finilizedBlockEvent1);
-            await storage.onFinalizedBlock(data.finilizedBlockEvent2);
+            await storage.onFinalizedBlock(data.finalizedBlockEvent1);
+            await storage.onFinalizedBlock(data.finalizedBlockEvent2);
             await storage.onBlockAdded(data.blockAddedEvent1);
             await storage.onBlockAdded(data.blockAddedEvent2);
         });
@@ -111,9 +111,9 @@ describe('WebSocket Server', async () => {
             }
         });
         client.on('open', async () => {
-            await storage.onFinalizedBlock(data.finilizedBlockEvent1);
-            await storage.onFinalizedBlock(data.finilizedBlockEvent2);
-            await storage.onFinalizedBlock(data.finilizedBlockEvent3);
+            await storage.onFinalizedBlock(data.finalizedBlockEvent1);
+            await storage.onFinalizedBlock(data.finalizedBlockEvent2);
+            await storage.onFinalizedBlock(data.finalizedBlockEvent3);
             await storage.onDeployProcessed(data.deployProcessedEvent1);
             await storage.onDeployProcessed(data.deployProcessedEvent2);
             await storage.onDeployProcessed(data.deployProcessedEvent3);
@@ -141,9 +141,9 @@ describe('WebSocket Server', async () => {
             }
         });
         client.on('open', async () => {
-            await storage.onFinalizedBlock(data.finilizedBlockEvent1);
-            await storage.onFinalizedBlock(data.finilizedBlockEvent2);
-            await storage.onFinalizedBlock(data.finilizedBlockEvent3);
+            await storage.onFinalizedBlock(data.finalizedBlockEvent1);
+            await storage.onFinalizedBlock(data.finalizedBlockEvent2);
+            await storage.onFinalizedBlock(data.finalizedBlockEvent3);
             await storage.onDeployProcessed(data.deployProcessedEvent1);
             await storage.onDeployProcessed(data.deployProcessedEvent2);
             await storage.onDeployProcessed(data.deployProcessedEvent3);

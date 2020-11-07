@@ -1,5 +1,5 @@
 module.exports = {
-    finilizedBlockEvent1: {
+    finalizedBlockEvent1: {
         "proto_block":{
             "hash":"aa25466409191316db2ad075bf005cba502e2a46f83102bceb736356a9c55677",
             "deploys":[
@@ -15,7 +15,7 @@ module.exports = {
         "proposer":"01d28e8ac5e5a02512c134fecb5cde43755b59d4616e109a4afd6c4f908bf82606"
     },
 
-    finilizedBlockEvent2: {
+    finalizedBlockEvent2: {
         "proto_block":{
             "hash":"bb25466409191316db2ad075bf005cba502e2a46f83102bceb736356a9c55677",
             "deploys":[
@@ -30,7 +30,7 @@ module.exports = {
         "proposer":"01d28e8ac5e5a02512c134fecb5cde43755b59d4616e109a4afd6c4f908bf82606"
     },
 
-    finilizedBlockEvent3: {
+    finalizedBlockEvent3: {
         "proto_block":{
             "hash":"cc25466409191316db2ad075bf005cba502e2a46f83102bceb736356a9c55677",
             "deploys":[
