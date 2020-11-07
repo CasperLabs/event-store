@@ -9,6 +9,7 @@ const wsServer = require('../src/wsServer');
 const PubSub = require('../src/pubsub');
 
 const data = require('./mockData');
+const e = require('express');
 
 var wsApp = null;
 var server = null;
@@ -26,8 +27,10 @@ describe('WebSocket Server', async () => {
     
     it('Should handle block stream', (done) => {
         client = new WebSocket('ws://localhost:4000/blocks');
+        let responses = [];
         client.on('message', async (block) => {
-            let expected = {
+            responses.push(block);
+            let expected1 = {
                 blockHash: 'block1_6409191316db2ad075bf005cba502e2a46f83102bceb736356a9c51111',
                 parentHash: '16815a580c3c1005a7df485e77e31c89e5fb1dec4d57988ffb29f1e699977414',
                 timestamp: '2020-10-08T12:11:35.808Z',
@@ -59,8 +62,8 @@ describe('WebSocket Server', async () => {
                     assert.deepEqual(JSON.parse(block), expected2);
                     done();
                 }
-            } catch (error) {
-                done(new Error("Not expected block"));
+            } catch (err) {
+                done(err);
             }
         });
         client.on('open', async () => {
@@ -96,17 +99,15 @@ describe('WebSocket Server', async () => {
                   errorMessage: null,
                   blockHash: null
                 }
-            try {   
+            try { 
                 if (deploys.length == 1) {
-                    assert.deepEqual(JSON.parse(deploy), expected1, "Deploy1 failed");
+                    assert.deepEqual(JSON.parse(deploy), expected1, "Not expected deploy1");   
                 } else if (deploys.length == 2) {
-                    assert.deepEqual(JSON.parse(deploy), expected2, "Deploy2 failed");
-                    done();
-                } else {
+                    assert.deepEqual(JSON.parse(deploy), expected2, "Not expected deploy2");
                     done();
                 }
-            } catch (error) {
-                done(new Error("Not expected deploys"));
+            } catch (err) {
+                done(err);
             }
         });
         client.on('open', async () => {
@@ -125,19 +126,18 @@ describe('WebSocket Server', async () => {
         client.on('message', async (deploy) => {
             let expected =
                 {
-                  deployHash: "deploy1_0fb356b6d76d2f64a9500ed2cf1d3062ffcf03bb837003c8208602c5d3",
-                  account: "010c801c47ed20a9ec40a899ddc7b51a15db2a6c55041313eb0201ae04ee9bf932",
-                  state: "processed",
-                  cost: "11",
-                  errorMessage: null,
-                  blockHash: null
+                  "deployHash": "deploy1_0fb356b6d76d2f64a9500ed2cf1d3062ffcf03bb837003c8208602c5d3",
+                  "account": "010c801c47ed20a9ec40a899ddc7b51a15db2a6c55041313eb0201ae04ee9bf932",
+                  "state": "processed",
+                  "cost": "11",
+                  "errorMessage": null,
+                  "blockHash": null
                 }
             try {
-                console.log(deploy);
                 assert.deepEqual(JSON.parse(deploy), expected);
                 done();
-            } catch (error) {
-                done(new Error("Not expected deploy"));
+            } catch (err) {
+                done(err);
             }
         });
         client.on('open', async () => {
@@ -145,16 +145,14 @@ describe('WebSocket Server', async () => {
             await storage.onFinalizedBlock(data.finilizedBlockEvent2);
             await storage.onFinalizedBlock(data.finilizedBlockEvent3);
             await storage.onDeployProcessed(data.deployProcessedEvent1);
-            console.log("\tdeployHash :: dp1 :: " + client.readyState);
             await storage.onDeployProcessed(data.deployProcessedEvent2);
-            console.log("\tdeployHash :: dp2 :: " + client.readyState);
             await storage.onDeployProcessed(data.deployProcessedEvent3);
-            console.log("\tdeployHash :: dp3 :: " + client.readyState);
         });
     });
     
     afterEach(async () => {
         client.terminate();
+        pubsub.unsubscribe();   
         server.close();
         wsApp.getWss().close();
     });

@@ -5,16 +5,17 @@ class PubSub {
         this.subscriber = redisClient.duplicate();
     }
 
+    unsubscribe() {
+        this.subscriber.unsubscribe();
+    }
+
     broadcast_block(block) {
         this.publisher.publish("ws:blocks", JSON.stringify(block));
     }
 
     broadcast_deploy(deploy) {
-        console.log("\t\tbroadcast :: start");
         this.publisher.publish("ws:accountDeploys:" + deploy.account, JSON.stringify(deploy));
-        console.log("\t\tbroadcast :: accountDeploys");
         this.publisher.publish("ws:deploy:" + deploy.deployHash, JSON.stringify(deploy));
-        console.log("\t\tbroadcast :: deploy");
     }
 
     on_block(callback) {

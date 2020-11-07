@@ -13,7 +13,6 @@ let wsServer = (pubsub) => {
 
     app.ws('/deploy/:deployHash', function(ws, req) {
         pubsub.on_deployByHash(req.params.deployHash, (deploy) => {
-            console.log("\twss :: sending deploy to endpoint")
             ws.send(deploy)
         });
     });
