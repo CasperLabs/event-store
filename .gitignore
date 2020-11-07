@@ -66,5 +66,5 @@ developement_sqlite.db
 # packages list
 package-lock.json
 
-# VScode launch config
-.vscode/launch.json
+# VSCode
+.vscode

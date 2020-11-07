@@ -7,7 +7,9 @@
     "dev-start-web-server-with-mock-data": "NODE_ENV=development MOCK_DATA=1 node src/eventStore.js",
     "dev-start-web-server-with-duplicate-data": "NODE_ENV=development MOCK_DATA=2 node src/eventStore.js",
     "dev-start-event-handler": "NODE_ENV=development node src/eventHandler.js",
-    "test": "NODE_ENV=test mocha"
+    "test": "NODE_ENV=test mocha",
+    "start-web-server": "npx sequelize db:migrate --config config/db-config.json && node src/eventStore.js",
+    "start-event-handler": "npx sequelize db:migrate --config config/db-config.json && node src/eventHandler.js"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -19,13 +21,13 @@
     "morgan": "~1.9.1",
     "mysql2": "^2.2.5",
     "sequelize": "^6.3.5",
-    "sequelize-cli": "^6.2.0",
     "sequelize-to-json": "^0.10.4",
-    "sqlite3": "^5.0.0",
     "stream": "0.0.2",
-    "ws": "^7.3.1"
+    "ws": "^7.3.1",
+    "sequelize-cli": "^6.2.0"
   },
   "devDependencies": {
+    "sqlite3": "^5.0.0",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "chai-json-equal": "0.0.1",

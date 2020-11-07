@@ -26,10 +26,8 @@ describe('WebSocket Server', async () => {
     
     it('Should handle block stream', (done) => {
         client = new WebSocket('ws://localhost:4000/blocks');
-        let responses = [];
         client.on('message', async (block) => {
-            responses.push(block);
-            let expected1 = {
+            let expected = {
                 blockHash: 'block1_6409191316db2ad075bf005cba502e2a46f83102bceb736356a9c51111',
                 parentHash: '16815a580c3c1005a7df485e77e31c89e5fb1dec4d57988ffb29f1e699977414',
                 timestamp: '2020-10-08T12:11:35.808Z',
