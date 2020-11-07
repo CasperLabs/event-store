@@ -15,7 +15,7 @@ var http = require('http');
 /**
  * Test data for developement env.
  */
-if (env == 'developement') {
+if (env == 'development') {
     (async () => {
         await models.sequelize.sync({ force: true, logging: false });
         if (process.env.MOCK_DATA) {

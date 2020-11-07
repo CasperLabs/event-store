@@ -11,6 +11,7 @@ class PubSub {
 
     broadcast_block(block) {
         this.publisher.publish("ws:blocks", JSON.stringify(block));
+        this.publisher.publish("ws:block:" + block.blockHash, JSON.stringify(block));
     }
 
     broadcast_deploy(deploy) {
@@ -23,6 +24,13 @@ class PubSub {
             callback(block);
         });
         this.subscriber.subscribe("ws:blocks");
+    }
+
+    on_blockByHash(blockHash, callback) {
+        this.subscriber.on("message", (channel, block) => {
+            callback(block);
+        });
+        this.subscriber.subscribe("ws:block:" + blockHash)
     }
 
     on_deployByAccount(account, callback) {

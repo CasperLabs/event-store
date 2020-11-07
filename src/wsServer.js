@@ -11,6 +11,12 @@ let wsServer = (pubsub) => {
         });
     });
 
+    app.ws('/block/:blockHash', function(ws, req) {
+        pubsub.on_blockByHash(req.params.blockHash, (block) => {
+            ws.send(block);
+        });
+    });
+
     app.ws('/deploy/:deployHash', function(ws, req) {
         pubsub.on_deployByHash(req.params.deployHash, (deploy) => {
             ws.send(deploy)

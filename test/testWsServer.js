@@ -74,6 +74,40 @@ describe('WebSocket Server', async () => {
         });
     });
 
+    it('Should handle block by block hash query', (done) => {
+        let block_hash = data.blockAddedEvent1.block_hash;
+        client = new WebSocket(`ws://localhost:4000/block/${block_hash}`);
+        client.on('message', async (block) => {
+           let expected = {
+            blockHash: "block1_6409191316db2ad075bf005cba502e2a46f83102bceb736356a9c51111",
+            parentHash: "16815a580c3c1005a7df485e77e31c89e5fb1dec4d57988ffb29f1e699977414",
+            timestamp: "2020-10-08T12:11:35.808Z",
+            eraId: 163,
+            proposer: "01d28e8ac5e5a02512c134fecb5cde43755b59d4616e109a4afd6c4f908bf82606",
+            state: "added",
+            height: 1800,
+            deploys: [
+              "deploy1_0fb356b6d76d2f64a9500ed2cf1d3062ffcf03bb837003c8208602c5d3",
+              "deploy2_6fb356b6d76d2f64a9500ed2cf1d3062ffcf03bb837003c8208602c5d3"
+            ]
+          };
+           try {
+               assert.deepEqual(JSON.parse(block), expected, "Not expected block");
+               done();
+           } catch (err) {
+               done(err);
+           }
+        });      
+        client.on('open', async () => {
+            await storage.onFinalizedBlock(data.finalizedBlockEvent1);
+            await storage.onFinalizedBlock(data.finalizedBlockEvent2);
+            await storage.onFinalizedBlock(data.finalizedBlockEvent3);
+            await storage.onBlockAdded(data.blockAddedEvent1);
+            await storage.onBlockAdded(data.blockAddedEvent2);
+            await storage.onBlockAdded(data.blockAddedEvent3);
+        })
+    });
+
     it('Should handle deploy by account query', (done) => {
         // Proposer's account hash
         let account_hash = data.deployProcessedEvent1.account;
@@ -134,7 +168,7 @@ describe('WebSocket Server', async () => {
                   "blockHash": null
                 }
             try {
-                assert.deepEqual(JSON.parse(deploy), expected);
+                assert.deepEqual(JSON.parse(deploy), expected, "Not expected deploy");
                 done();
             } catch (err) {
                 done(err);
