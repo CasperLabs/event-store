@@ -11,11 +11,15 @@ let wsServer = (pubsub) => {
         });
     });
 
+    app.ws('/deploy/:deployHash', function(ws, req) {
+        pubsub.on_deployByHash(req.params.deployHash, (deploy) => {
+            console.log("\twss :: sending deploy to endpoint")
+            ws.send(deploy)
+        });
+    });
+
     app.ws('/accountDeploys/:account', function(ws, req) {
-        console.log(`WSS :: /deploys/${req.params.account} request`);
-        pubsub.on_deploy(req.params.account ,(deploy) => {
-            console.log("WSS :: callback from PubSub");
-            console.log("WSS :: deploy: " + deploy);
+        pubsub.on_deployByAccount(req.params.account , (deploy) => {
             ws.send(deploy);
         });
     });

@@ -45,6 +45,7 @@ class Storage {
         await deploy.save();
 
         if(this.pubsub !== null) {
+            console.log("\tstorage :: pubsub confirmed");
             this.pubsub.broadcast_deploy(await deploy.toJSON());
         }
     }

@@ -53,53 +53,60 @@ describe('WebSocket Server', async () => {
                 deploys: []
             };
             try {
-                if (responses.length == 1) {
+                if (responses.length > 2) {
+                    done();
+                } else if (responses.length == 1) {
                     assert.deepEqual(JSON.parse(block), expected1);
                 } else if (responses.length == 2) {
                     assert.deepEqual(JSON.parse(block), expected2);
                     done();
-                };
+                }
             } catch (error) {
                 done(new Error("Not expected block"));
             }
         });
         client.on('open', async () => {
             await storage.onFinalizedBlock(data.finilizedBlockEvent1);
-            await storage.onBlockAdded(data.blockAddedEvent1);
             await storage.onFinalizedBlock(data.finilizedBlockEvent2);
+            await storage.onBlockAdded(data.blockAddedEvent1);
             await storage.onBlockAdded(data.blockAddedEvent2);
         });
     });
 
-    it('Should handle accountDeploys query', (done) => {
+    it('Should handle deploy by account query', (done) => {
         // Proposer's account hash
-        console.log("\n\t= LOGGING FOR DEBUGGING =");
         let account_hash = data.deployProcessedEvent1.account;
-        client = new WebSocket(`ws://localhost:4000/accountDeploys/010c801c47ed20a9ec40a899ddc7b51a15db2a6c55041313eb0201ae04ee9bf932`);
-        client.on('message', async (deploys) => {
-            console.log("Receiving...");
-            let expected = [
+        client = new WebSocket(`ws://localhost:4000/accountDeploys/${account_hash}`);
+        let deploys = [];
+        client.on('message', async (deploy) => {
+            deploys.push(deploy);
+            let expected1 =
                 {
-                  "deployHash": "deploy1_0fb356b6d76d2f64a9500ed2cf1d3062ffcf03bb837003c8208602c5d3",
-                  "account": "010c801c47ed20a9ec40a899ddc7b51a15db2a6c55041313eb0201ae04ee9bf932",
-                  "state": "processed",
-                  "cost": 11,
-                  "errorMessage": null,
-                  "blockHash": "block1_6409191316db2ad075bf005cba502e2a46f83102bceb736356a9c51111"
-                },
-                {
-                  "deployHash": "deploy2_6fb356b6d76d2f64a9500ed2cf1d3062ffcf03bb837003c8208602c5d3",
-                  "account": "010c801c47ed20a9ec40a899ddc7b51a15db2a6c55041313eb0201ae04ee9bf932",
-                  "state": "processed",
-                  "cost": 12,
-                  "errorMessage": null,
-                  "blockHash": "block1_6409191316db2ad075bf005cba502e2a46f83102bceb736356a9c51111"
+                  deployHash: "deploy1_0fb356b6d76d2f64a9500ed2cf1d3062ffcf03bb837003c8208602c5d3",
+                  account: "010c801c47ed20a9ec40a899ddc7b51a15db2a6c55041313eb0201ae04ee9bf932",
+                  state: "processed",
+                  cost: "11",
+                  errorMessage: null,
+                  blockHash: null
                 }
-            ];
-            try {
-                console.log("Checking deploys...");
-                assert.deepEqual(deploys, expected);
-                done();
+            let expected2 = 
+                {
+                  deployHash: "deploy2_6fb356b6d76d2f64a9500ed2cf1d3062ffcf03bb837003c8208602c5d3",
+                  account: "010c801c47ed20a9ec40a899ddc7b51a15db2a6c55041313eb0201ae04ee9bf932",
+                  state: "processed",
+                  cost: "12",
+                  errorMessage: null,
+                  blockHash: null
+                }
+            try {   
+                if (deploys.length == 1) {
+                    assert.deepEqual(JSON.parse(deploy), expected1, "Deploy1 failed");
+                } else if (deploys.length == 2) {
+                    assert.deepEqual(JSON.parse(deploy), expected2, "Deploy2 failed");
+                    done();
+                } else {
+                    done();
+                }
             } catch (error) {
                 done(new Error("Not expected deploys"));
             }
@@ -113,8 +120,41 @@ describe('WebSocket Server', async () => {
             await storage.onDeployProcessed(data.deployProcessedEvent3);
         });
     });
-    
 
+    it('Should handle deploy by deployHash query', (done) => {
+        let deployHash = data.deployProcessedEvent1.deploy_hash;
+        client = new WebSocket(`ws://localhost:4000/deploy/${deployHash}`);
+        client.on('message', async (deploy) => {
+            let expected =
+                {
+                  deployHash: "deploy1_0fb356b6d76d2f64a9500ed2cf1d3062ffcf03bb837003c8208602c5d3",
+                  account: "010c801c47ed20a9ec40a899ddc7b51a15db2a6c55041313eb0201ae04ee9bf932",
+                  state: "processed",
+                  cost: "11",
+                  errorMessage: null,
+                  blockHash: null
+                }
+            try {
+                console.log(deploy);
+                assert.deepEqual(JSON.parse(deploy), expected);
+                done();
+            } catch (error) {
+                done(new Error("Not expected deploy"));
+            }
+        });
+        client.on('open', async () => {
+            await storage.onFinalizedBlock(data.finilizedBlockEvent1);
+            await storage.onFinalizedBlock(data.finilizedBlockEvent2);
+            await storage.onFinalizedBlock(data.finilizedBlockEvent3);
+            await storage.onDeployProcessed(data.deployProcessedEvent1);
+            console.log("\tdeployHash :: dp1 :: " + client.readyState);
+            await storage.onDeployProcessed(data.deployProcessedEvent2);
+            console.log("\tdeployHash :: dp2 :: " + client.readyState);
+            await storage.onDeployProcessed(data.deployProcessedEvent3);
+            console.log("\tdeployHash :: dp3 :: " + client.readyState);
+        });
+    });
+    
     afterEach(async () => {
         client.terminate();
         server.close();

@@ -10,8 +10,11 @@ class PubSub {
     }
 
     broadcast_deploy(deploy) {
-        console.log("PUBSUB :: Broadcast Deploy");
-        this.publisher.publish("ws:accountdeploys:" + deploy.account, JSON.stringify(deploy));
+        console.log("\t\tbroadcast :: start");
+        this.publisher.publish("ws:accountDeploys:" + deploy.account, JSON.stringify(deploy));
+        console.log("\t\tbroadcast :: accountDeploys");
+        this.publisher.publish("ws:deploy:" + deploy.deployHash, JSON.stringify(deploy));
+        console.log("\t\tbroadcast :: deploy");
     }
 
     on_block(callback) {
@@ -21,14 +24,19 @@ class PubSub {
         this.subscriber.subscribe("ws:blocks");
     }
 
-    on_deploy(account, callback) {
-        console.log("PUBSUB :: on_deploy for " + account);
+    on_deployByAccount(account, callback) {
         this.subscriber.on("message", (channel, deploy) => {
             callback(deploy);
         });
         this.subscriber.subscribe("ws:accountDeploys:" + account);
     }
 
+    on_deployByHash(deployHash, callback) {
+        this.subscriber.on("message", (channel, deploy) => {
+            callback(deploy);
+        });
+        this.subscriber.subscribe("ws:deploy:" + deployHash)
+    }
 }
 
 module.exports = PubSub;
