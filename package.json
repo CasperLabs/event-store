@@ -8,8 +8,8 @@
     "dev-start-web-server-with-duplicate-data": "NODE_ENV=development MOCK_DATA=2 node src/eventStore.js",
     "dev-start-event-handler": "NODE_ENV=development node src/eventHandler.js",
     "test": "NODE_ENV=test mocha",
-    "start-web-server": "npx sequelize db:migrate --config config/db-config.json && node src/eventStore.js",
-    "start-event-handler": "npx sequelize db:migrate --config config/db-config.json && node src/eventHandler.js"
+    "start-web-server": "node src/eventStore.js",
+    "start-event-handler": "node src/eventHandler.js"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",

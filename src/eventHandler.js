@@ -44,9 +44,13 @@ class EventHandler {
      * Returns writeable stream pointed to the storage component
      */
     async createOutputStream() {
-
-        // initialise storage
-        // await models.sequelize.sync({ force: false, logging: false });
+        
+        // Sync database schema.
+        console.log("Syncing database schema...");
+        await models.sequelize.sync({ force: false, logging: false });
+        console.log("Syncing database schema... DONE");
+        
+        // Initialise storage
         let storage = new Storage(models);
 
         // Extend empty writeable object
