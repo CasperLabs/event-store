@@ -153,6 +153,7 @@ Get the information about a single deploy.
 $ curl -s localhost:3000/deploy/deploy3_0fb356b6d76d2f64a9500ed2cf1d3062ffcf03bb837003c8208602c5d3 | jq
 {
   "deployHash": "deploy3_0fb356b6d76d2f64a9500ed2cf1d3062ffcf03bb837003c8208602c5d3",
+  "account": "1234501c47ed20a9ec40a899ddc7b51a15db2a6c55041313eb0201ae04ee9bf932",
   "state": "processed",
   "cost": 12,
   "errorMessage": null,
