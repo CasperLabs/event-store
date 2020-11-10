@@ -4,7 +4,6 @@ const got = require('got');
 const fs = require('fs');
 const Storage = require('./storage');
 const models = require('../src/models/index');
-const mockData = require('../test/mockData');
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/eh-config.json')[env];
 
@@ -18,24 +17,15 @@ class EventHandler {
      * @param {string} url 
      */
     async createInputStream(url) {
-
-        if (url == 'mockdata') {
-            try {
-                return fs.createReadStream("../test/mockData.js");
-            } catch (err) {
+        try {
+            const readStream = got.stream(url);
+            // Still to implement retry on failed connection
+            return readStream;
+        } catch (err) {
+            if (err instanceof got.stream.RequestError) {
+                throw new Error("Connection Failed - check the status of the node:\n" + err);
+            } else {
                 throw new Error(err);
-            }
-        } else {
-            try {
-                const readStream = got.stream(url);
-                // Still to implement retry on failed connection
-                return readStream;
-            } catch (err) {
-                if (err instanceof got.stream.RequestError) {
-                    throw new Error("Connection Failed - check the status of the node:\n" + err);
-                } else {
-                    throw new Error(err);
-                }
             }
         }
     }
