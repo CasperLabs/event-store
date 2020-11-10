@@ -52,7 +52,13 @@ class EventHandler {
         
         outputStream._write = async (chunk, encoding, done) => {
             // Removes 'data:' prefix from the event to convert it to JSON
-            let jsonData = JSON.parse(chunk.toString().split("\n")[0].substr(5));
+            let jsonData;
+            try {
+                let jsonData = JSON.parse(chunk.toString().split("\n")[0].substr(5));
+            } catch (err) {
+                done();
+                return;
+            }
 
             // Uncomment to get JSON output from event stream to stdout
             // console.log(jsonData);
