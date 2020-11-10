@@ -1,5 +1,6 @@
 var express = require('express');
 var paginate = require('express-paginate');
+var cors = require('cors');
 // var cookieParser = require('cookie-parser');
 // var logger = require('morgan');
 const Storage = require('./storage');
@@ -7,6 +8,7 @@ var storage = null;
 
 let httpServer = (models) => {
     var app = express();
+    app.use(cors());
     storage = new Storage(models);
     
     // app.use(logger('dev'));
