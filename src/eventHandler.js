@@ -54,9 +54,9 @@ class EventHandler {
             // Removes 'data:' prefix from the event to convert it to JSON
             let jsonData;
             try {
-                let jsonData = JSON.parse(chunk.toString().split("\n")[0].substr(5));
+                jsonData = JSON.parse(chunk.toString().split("\n")[0].substr(5));
                 if (jsonData == undefined) {
-                    throw new Error("Not a json");
+                    throw new Error("Not a json after all");
                 }
             } catch (err) {
                 done();
