@@ -11,8 +11,8 @@ describe('Storage', async () => {
         storage = new Storage(models);
     });
   
-    it('Should handle BlockFinilized event', async () => {
-        let e = data.finilizedBlockEvent1;
+    it('Should handle Blockfinalized event', async () => {
+        let e = data.finalizedBlockEvent1;
         await storage.onFinalizedBlock(e);
         
         let block = await storage.findBlockByHeight(e.height);
@@ -36,14 +36,14 @@ describe('Storage', async () => {
         assert.strictEqual(deploys[1].state, 'finalized');
     });
 
-    it('Should throw and error on duplicated BlockFinilized event', async () => {
-        let e = data.finilizedBlockEvent1;
+    it('Should log warning on duplicated BlockFinalized event', async () => {
+        let e = data.finalizedBlockEvent1;
         await storage.onFinalizedBlock(e);
         await storage.onFinalizedBlock(e);
     });
 
     it('Should handle DeployProcessed event', async () => {
-        await storage.onFinalizedBlock(data.finilizedBlockEvent1);
+        await storage.onFinalizedBlock(data.finalizedBlockEvent1);
 
         let e = data.deployProcessedEvent1;
         await storage.onDeployProcessed(e);
@@ -55,7 +55,7 @@ describe('Storage', async () => {
     });
 
     it('Should handle BlockAdded event', async () => {
-        await storage.onFinalizedBlock(data.finilizedBlockEvent1);
+        await storage.onFinalizedBlock(data.finalizedBlockEvent1);
         let e = data.blockAddedEvent1;
         await storage.onBlockAdded(e);
 
