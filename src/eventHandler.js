@@ -46,10 +46,14 @@ class EventHandler {
     async createOutputStream() {
         
         // Sync database schema.
-        console.log("Syncing database schema...");
-        await models.sequelize.sync({ force: false, logging: false });
-        console.log("Syncing database schema... DONE");
-        
+        if (env == "production") {
+            (async () => {
+                console.log("Syncing database schema...");
+                await models.sequelize.sync({ force: false, logging: false });
+                console.log("Syncing database schema... DONE");
+            })();
+        }
+                
         // Initialise storage
         let storage = new Storage(models);
 

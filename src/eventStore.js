@@ -15,17 +15,20 @@ var http = require('http');
 /**
  * Sync database schema.
  */
-(async () => {
-    console.log("Syncing database schema...");
-    await models.sequelize.sync({ force: false, logging: false });
-    console.log("Syncing database schema... DONE");
-})();
+if (env == "production") {
+    (async () => {
+        console.log("Syncing database schema...");
+        await models.sequelize.sync({ force: false, logging: false });
+        console.log("Syncing database schema... DONE");
+    })();
+}
 
 /**
  * Test data for developement env.
  */
 if (env == 'development') {
     (async () => {
+        await models.sequelize.sync({ force: true, logging: false });
         if (process.env.MOCK_DATA) {
             const Storage = require('./storage');
             let storage = new Storage(models);
