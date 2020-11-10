@@ -55,6 +55,9 @@ class EventHandler {
             let jsonData;
             try {
                 let jsonData = JSON.parse(chunk.toString().split("\n")[0].substr(5));
+                if (jsonData == undefined) {
+                    throw new Error("Not a json");
+                }
             } catch (err) {
                 done();
                 return;
