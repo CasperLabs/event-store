@@ -6,12 +6,13 @@ var cors = require('cors');
 const Storage = require('./storage');
 var storage = null;
 
-let httpServer = (models) => {
+let httpServer = (models, pubsub) => {
     var app = express();
-    app.use(cors());
+    var wsApp = require('express-ws')(app);
     storage = new Storage(models);
     
     // app.use(logger('dev'));
+    app.use(cors());
     app.use(express.json());
     app.use(express.urlencoded({ extended: false }));
     
@@ -65,11 +66,35 @@ let httpServer = (models) => {
         res.send(result);
     });
 
-    app.use(function (req,res,next){
+    app.ws('/ws/blocks', (ws, req) => {
+       pubsub.on_block( (block) => {
+           ws.send(block)
+       }); 
+    });
+
+    app.ws('ws/block/:blockHash', function(ws, req) {
+        pubsub.on_blockByHash(req.params.blockHash, (block) => {
+            ws.send(block);
+        });
+    });
+
+    app.ws('ws/deploy/:deployHash', function(ws, req) {
+        pubsub.on_deployByHash(req.params.deployHash, (deploy) => {
+            ws.send(deploy)
+        });
+    });
+
+    app.ws('ws/accountDeploys/:account', function(ws, req) {
+        pubsub.on_deployByAccount(req.params.account , (deploy) => {
+            ws.send(deploy);
+        });
+    });
+
+    app.use(function (req, res, next){
         res.status(400).send('Bad Request');
     });
 
-    return app;
+    return wsApp;
 }
 
 module.exports = httpServer;
