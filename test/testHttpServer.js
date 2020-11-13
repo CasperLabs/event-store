@@ -63,10 +63,7 @@ describe('HttpServer', async () => {
                     eraId: 163,
                     proposer: '01d28e8ac5e5a02512c134fecb5cde43755b59d4616e109a4afd6c4f908bf82606',
                     state: 'added',
-                    height: 1802,
-                    deploys: [
-                        "deploy3_0fb356b6d76d2f64a9500ed2cf1d3062ffcf03bb837003c8208602c5d3"
-                    ]
+                    height: 1802
                 }, {
                     blockHash: 'block2_09191316db2ad075bf005cba502e2a46f83102bceb736356a9c51111',
                     parentHash: 'aacd466409191316db2ad075bf005cba502e2a46f83102bceb736356a9c51111',
@@ -74,8 +71,7 @@ describe('HttpServer', async () => {
                     eraId: 163,
                     proposer: '01d28e8ac5e5a02512c134fecb5cde43755b59d4616e109a4afd6c4f908bf82606',
                     state: 'added',
-                    height: 1801,
-                    deploys: []
+                    height: 1801
                 }, {
                     blockHash: 'block1_6409191316db2ad075bf005cba502e2a46f83102bceb736356a9c51111',
                     parentHash: '16815a580c3c1005a7df485e77e31c89e5fb1dec4d57988ffb29f1e699977414',
@@ -83,18 +79,14 @@ describe('HttpServer', async () => {
                     eraId: 163,
                     proposer: '01d28e8ac5e5a02512c134fecb5cde43755b59d4616e109a4afd6c4f908bf82606',
                     state: 'added',
-                    height: 1800,
-                    deploys: [
-                        "deploy1_0fb356b6d76d2f64a9500ed2cf1d3062ffcf03bb837003c8208602c5d3",
-                        "deploy2_6fb356b6d76d2f64a9500ed2cf1d3062ffcf03bb837003c8208602c5d3"
-                    ]
+                    height: 1800
                 }
             ],
             pageCount: 1,
             itemCount: 3,
             pages: [ { number: 1, url: '/blocks?page=1&limit=10' } ]
         }
-        assert.deepEqual(expected, response.body);
+        assert.deepEqual(response.body, expected);
     });
 
     it('Should respond with 404 on unknown deploy.', async () => {

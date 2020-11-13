@@ -41,7 +41,7 @@ let httpServer = (models) => {
         const pageCount = Math.ceil(blocks.count / req.query.limit);
         let result = {
             data: await Promise.all(blocks.rows.map(block => {
-                return block.toJSON();
+                return block.toJSON(skipDeploys = true);
             })),
             pageCount: pageCount,
             itemCount: itemCount,

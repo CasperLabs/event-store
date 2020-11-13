@@ -8,9 +8,8 @@ module.exports = (sequelize, DataTypes) => {
             });
         }
 
-        async toJSON() {
-            let deploys = await this.getDeploys();
-            return {
+        async toJSON(skipDeploys = false) {
+            let result = {
                 "blockHash": this.blockHash,
                 "parentHash": this.parentHash,
                 "timestamp": this.timestamp,
@@ -18,10 +17,14 @@ module.exports = (sequelize, DataTypes) => {
                 "proposer": this.proposer,
                 "state": this.state,
                 "height": this.blockHeight,
-                "deploys": deploys.map(deploy => {
+            };
+            if (!skipDeploys) {
+                let deploys = await this.getDeploys();
+                result["deploys"] = deploys.map(deploy => {
                     return deploy.deployHash;
-                })
+                });
             }
+            return result; 
         }
     };
 
